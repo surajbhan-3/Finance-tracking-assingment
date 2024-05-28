@@ -59,10 +59,114 @@ The server will start on the port specified in the `.env` file (default is 3000)
   - Returns a welcome message.
 
 - **User Routes**
-  - `POST /api/user/register_user`
-    - Registers a new user.
-  - `POST /api/user/login`
-    - Authenticates a user and returns a token.
+
+### User Registration API
+
+This API allows you to register a new user by sending a POST request with the necessary user details. 
+
+### Endpoint
+
+### POST `/api/user/register_user`
+
+This endpoint registers a new user with the provided details.
+
+### Request
+
+### URL
+`http://localhost:4500/api/user/register_user`
+
+### Method
+`POST`
+
+### Headers
+Ensure that you include the appropriate headers for your request:
+- `Content-Type: application/json`
+
+### Request Body
+The JSON body should include the following fields:
+- `firstName`: (string) The first name of the user.
+- `lastName`: (string) The last name of the user.
+- `email`: (string) The email address of the user.
+- `password`: (string) The password for the user account.
+
+#### Example
+```json
+{
+    "firstName": "firstUser",
+    "lastName": "lastUser",
+    "email": "user11@gmail.com",
+    "password": "12345"
+}
+```
+
+## Response
+
+### Success Response
+
+#### Status Code
+`200 OK`
+
+#### Response Body
+The JSON response body includes:
+- `data`: An object containing the details of the newly registered user.
+- `message`: A confirmation message indicating the user has been registered.
+- `result`: A boolean indicating the success of the operation.
+
+#### Example
+```json
+{
+    "data": {
+        "id": 3,
+        "firstName": "firstUser",
+        "lastName": "lastUser",
+        "email": "user11@gmail.com",
+        "password": "$2b$08$bRYAaADyGePYLFb5kQFwl.PlIj6ybu3MW0n.YxbiMKYrBpUwEGg7m",
+        "created_at": "2024-05-28T07:49:22.658Z"
+    },
+    "message": "User has been registered",
+    "result": true
+}
+```
+
+
+
+### User Login Endpoint
+
+**URL:** `http://localhost:4500/api/user/login`  
+**Method:** `POST`  
+**Content-Type:** `application/json`
+
+### Request
+
+#### Input JSON
+```json
+{
+    "email": "user11@gmail.com",
+    "password": "12345"
+}
+```
+
+### Response
+
+#### Success
+```json
+{
+    "message": "User logged in successfully",
+    "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoidXNlcjExQGdtYWlsLmNvbSIsImlhdCI6MTcxNjg4MjgzMCwiZXhwIjoxNzE3NDg3NjMwfQ.Oh0POeHaW413as4No_YM0e2LC4-69tM5zf3ycIiCsU4"
+}
+``
+
+#### Response
+```json
+{
+    "message": "User logged in successfully",
+    "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoidXNlcjExQGdtYWlsLmNvbSIsImlhdCI6MTcxNjg4MjgzMCwiZXhwIjoxNzE3NDg3NjMwfQ.Oh0POeHaW413as4No_YM0e2LC4-69tM5zf3ycIiCsU4"
+}
+
+```
+
+
+
 
 ### Protected Routes
 These routes require the `AuthenticationMiddleware` to be accessed.
@@ -70,8 +174,25 @@ These routes require the `AuthenticationMiddleware` to be accessed.
 - **Transaction Routes**
   - `POST /api/transactions/new_transaction`
     - Creates a new transaction with feature of currency conversion.
+     #### Input JSON
+```json
+{
+   
+   "amount":"4400",
+   "description":"The above amount is in rupees",
+   "categoryId":3,
+   "fromCurrency":"INR",
+   "toCurrency":"USD"
+  
+    
+}
+
+```
   - `GET /api/transactions/get_transaction`
     - Retrieves all transactions data.
+
+  
+
     
 - **Category Routes**
   - `POST /api/category/new_category`
@@ -82,6 +203,20 @@ These routes require the `AuthenticationMiddleware` to be accessed.
 - **Budget Routes**
   - `POST /api/budget/add_budget`
     - Creates a new budget.
+
+ ```json
+{
+   
+        "amount": 65600,
+        "startDate":"06-6-2024",
+        "endDate":"06-7-2024",
+        "fromCurrency":"INR",
+        "toCurrency":"USD"
+       
+}
+
+```   
+   
   - `GET /api/budget/all_budget`
     - Retrieves all budgets.
   - `PUT /api/budget/:id`
@@ -91,7 +226,10 @@ These routes require the `AuthenticationMiddleware` to be accessed.
 
 - **Report Routes**
   - `GET /api/report/get_report/:month/:year`
+    - /api/report/get_report/5/2024
     - Retrieves a monthly financial report for the specified month and year.
+    
+
 
 ## Middleware
 ### AuthenticationMiddleware
