@@ -20,10 +20,33 @@ const getMonthlyReport = async(req,res)=>{
 
         });
         console.log("hello")
-        console.log(transaction);
-        const income = transaction.filter(trans => trans.type ==="income").reduce((sum, trans)=>sum+ trans.amount, 0);
+        console.log(transaction)
+        const startDate = new Date(`${year}-${month.toString().padStart(2, '0')}-01T00:00:00.000Z`);
+
+        // Calculate the next month
+        let nextMonth = month + 1;
+        let nextMonthYear = year;
+        if (nextMonth > 12) {
+            nextMonth = 1;
+            nextMonthYear = (parseInt(year) + 1).toString();
+        }
+        const endDate = new Date(`${nextMonthYear}-${nextMonth.toString().padStart(2, '0')}-01T00:00:00.000Z`);
+        
+        const budget = await prisma.budget.findMany({
+            where: {
+                userId: userId,
+                startDate: {
+                    gte: startDate
+                },
+                endDate: {
+                    lt: endDate
+                }
+            }
+        });
+        const income = budget.filter(trans => trans.type ==="income").reduce((sum, trans)=>sum+ trans.amount, 0);
         const expense = transaction.filter(trans=>trans.type ==="expense").reduce((sum, trans)=> sum + trans.amount, 0);
-          
+        console.log(budget, "budget is here") 
+        console.log(income, expense)
         res.status(201).send({income: income, balance: income-expense});
      } catch (error) {
         
