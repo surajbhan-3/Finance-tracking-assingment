@@ -19,6 +19,7 @@ The Finance Tracking System Backend is a Node.js application built with Express.
 - Monthly financial reports
 - Middleware for authentication
 - CORS enabled
+- Currency conversion
 
 ## Installation
 To install and run this application, follow these steps:
@@ -41,7 +42,7 @@ To install and run this application, follow these steps:
 ## Configuration
 Create a `.env` file in the root directory of the project and add the following environment variables:
 ```
-PORT=3000
+PORT=4500
 ```
 
 ## Usage
@@ -68,7 +69,7 @@ These routes require the `AuthenticationMiddleware` to be accessed.
 
 - **Transaction Routes**
   - `POST /api/transactions/new_transaction`
-    - Creates a new transaction.
+    - Creates a new transaction with feature of currency conversion.
   - `GET /api/transactions/get_transaction`
     - Retrieves all transactions data.
     
