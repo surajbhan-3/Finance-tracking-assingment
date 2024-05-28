@@ -7,12 +7,13 @@ const createBudget = async(req,res)=>{
 
     const { amount, startDate, endDate, fromCurrency, toCurrency} = req.body;
     const userId = req.body.userId;
+    const typeincome ="income"
    console.log(startDate, endDate, userId)
    try {
     const convertedCurrency = await convertCurrency(amount, fromCurrency, toCurrency);
 
     const newBudget = await prisma.budget.create({
-        data:{amount:convertedCurrency, startDate:new Date(startDate), endDate: new Date(endDate), userId}
+        data:{amount:convertedCurrency, startDate:new Date(startDate), endDate: new Date(endDate), userId, type:typeincome}
     });
     res.status(201).send(newBudget);
    } catch (error) {
