@@ -1,18 +1,22 @@
 const {prisma} = require("../config/db.js");
+ 
+const { convertCurrency }= require("../utils/currencyConverter.js")
 
 
 const createBudget = async(req,res)=>{
 
-    const {category, amount, startDate, endDate} = req.body;
+    const { amount, startDate, endDate, fromCurrency, toCurrency} = req.body;
     const userId = req.body.userId;
-
+   console.log(startDate, endDate, userId)
    try {
+    const convertedCurrency = await convertCurrency(amount, fromCurrency, toCurrency);
+
     const newBudget = await prisma.budget.create({
-        data:{category,amount, startDate:new Date(startDate), endDate: new Date(endDate), userId}
+        data:{amount:convertedCurrency, startDate:new Date(startDate), endDate: new Date(endDate), userId}
     });
     res.status(201).send(newBudget);
    } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({message:"Internal Server Error", Error:error.message, result:false});
    }
 }
 
@@ -31,4 +35,50 @@ const getAllBudget = async(req,res)=>{
    }
 }
 
-module.exports={createBudget, getAllBudget}
+// Update a budget
+const updateBudget = async (req, res) => {
+    const { id } = req.params;
+    const { amount, startDate, endDate } = req.body;
+    const userId = req.body.userId;
+  
+    try {
+      const updateBudget = await prisma.budget.updateMany({
+        where: { id: parseInt(id), userId },
+        data: {
+          amount,
+          startDate: new Date(startDate), 
+          endDate: new Date(endDate),    
+        },
+      });
+  
+      if (updateBudget.count === 0) {
+        return res.status(404).json({ error: 'Budget not found' });
+      }
+  
+      res.status(200).json({ message: 'Budget updated successfully' });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+  
+  // Delete a budget
+const deleteBudget =  async (req, res) => {
+    const { id } = req.params;
+    const userId = req.body.userId;
+  
+    try {
+      const budget = await prisma.budget.deleteMany({
+        where: { id: parseInt(id), userId },
+      });
+  
+      if (budget.count === 0) {
+        return res.status(404).json({ error: 'Budget not found' });
+      }
+  
+      res.status(200).json({ message: 'Budget deleted successfully' });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+
+module.exports={createBudget, getAllBudget,updateBudget, deleteBudget}

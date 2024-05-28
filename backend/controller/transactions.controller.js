@@ -1,14 +1,16 @@
 
 const {prisma} = require("../config/db.js")
+const { convertCurrency }= require("../utils/currencyConverter.js")
 
 const newTransaction =  async(req,res)=>{
-      const {amount, description, categoryId} = req.body;
+      const {amount, description, categoryId, fromCurrency, toCurrency} = req.body;
        const date = Date();
       const userId = req.body.userId;
       try {
+        const convertedCurrency = await convertCurrency(amount, fromCurrency, toCurrency);
         const transaction = await prisma.transaction.create({
             data:{
-                amount,
+                amount:convertedCurrency,
                 date:new Date(date),
                 description,
                 categoryId,
@@ -33,5 +35,6 @@ const newTransaction =  async(req,res)=>{
    }
 
  }
+ 
 
  module.exports = {newTransaction, getTransactions}
